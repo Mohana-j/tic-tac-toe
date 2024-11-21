@@ -6,16 +6,16 @@ const xChoice = document.getElementById("x-choice");
 const oChoice = document.getElementById("o-choice");
 
 let board = Array(9).fill(null);
-let currentPlayer = "Player one has chose:";
-let gameActive = true;
+let currentPlayer = null; // Start with no player selected
+let gameActive = false; // Game cannot start until a player is selected
 
 // Initialize the game grid
 function initializeGame() {
     mainGrid.innerHTML = "";
     board.fill(null);
-    gameActive = true;
     results.textContent = "";
     playAgainButton.classList.remove("visible");
+    gameActive = currentPlayer !== null; // Ensure the game can only start if a player is selected
 
     for (let i = 0; i < 9; i++) {
         const box = document.createElement("div");
@@ -25,14 +25,19 @@ function initializeGame() {
         mainGrid.appendChild(box);
     }
 
-    turnIndicator.textContent = currentPlayer;
+    turnIndicator.textContent = currentPlayer || "Choose X or O";
 }
 
 // Handle box click
 function handleBoxClick(e) {
+    if (!gameActive) {
+        results.textContent = "Please select X or O before starting!";
+        return;
+    }
+
     const index = e.target.dataset.index;
 
-    if (gameActive && !board[index]) {
+    if (!board[index]) {
         board[index] = currentPlayer;
         e.target.textContent = currentPlayer;
 
@@ -86,11 +91,15 @@ playAgainButton.addEventListener("click", initializeGame);
 xChoice.addEventListener("click", () => {
     currentPlayer = "X";
     initializeGame();
+    gameActive = true; // Allow the game to start
+    results.textContent = ""; // Clear any previous messages
 });
 
 oChoice.addEventListener("click", () => {
     currentPlayer = "O";
     initializeGame();
+    gameActive = true; // Allow the game to start
+    results.textContent = ""; // Clear any previous messages
 });
 
 // Start the game
